@@ -198,7 +198,7 @@ export default function ProposalModal({
         </button>
 
         {/* Problem Header Info */}
-        <div className="mb-6">
+        <div className="mb-4">
           <div className="flex items-center gap-2 text-xs font-bold text-[#1B5E20] uppercase tracking-wider mb-1">
             <span>{problem.domain}</span>
             <span>•</span>
@@ -207,10 +207,41 @@ export default function ProposalModal({
           <h3 className="text-lg font-bold text-gray-900 leading-snug">
             {problem.title}
           </h3>
-          <p className="text-xs text-gray-600 mt-1 line-clamp-2">
+          <p className="text-xs text-gray-600 mt-1 line-clamp-3">
             {problem.description}
           </p>
         </div>
+
+        {/* Citizen Evidence Photos */}
+        {problem.photo_urls && problem.photo_urls.length > 0 && (
+          <div className="mb-5 bg-gray-50 p-2.5 rounded-lg border">
+            <div className="text-[11px] font-bold text-gray-600 uppercase tracking-wider mb-1.5 flex items-center gap-1">
+              <FileText className="w-3.5 h-3.5 text-[#1B5E20]" />
+              Citizen Photographic Evidence ({problem.photo_urls.length}):
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {problem.photo_urls.map((url: string, idx: number) => (
+                <a
+                  key={idx}
+                  href={url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group relative rounded-lg overflow-hidden border border-gray-300 hover:border-[#1B5E20] transition"
+                  title="Click to view full image in new tab"
+                >
+                  <img
+                    src={url}
+                    alt={`Evidence ${idx + 1}`}
+                    className="w-24 h-16 object-cover group-hover:scale-105 transition duration-200"
+                  />
+                  <span className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white text-[10px] font-bold">
+                    View Full ↗
+                  </span>
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Decision Toggle */}
         <div className="grid grid-cols-2 gap-2 p-1 bg-gray-100 rounded-lg mb-6 text-xs font-bold">
@@ -392,7 +423,7 @@ export default function ProposalModal({
                   className="w-4 h-4 mt-0.5 text-[#1B5E20] rounded focus:ring-2 focus:ring-[#E65100]"
                 />
                 <span className="text-xs text-gray-700 leading-relaxed">
-                  <strong>Intellectual Property & Open Governance Policy:</strong> I acknowledge that any solution IP developed under this public grant adheres to institutional guidelines and the Government of Jharkhand Open Innovation Framework.
+                  <strong>Intellectual Property & Open Governance Policy:</strong> I acknowledge that any solution IP developed under this public grant adheres to institutional guidelines and the Jan Samadhan Open Innovation Framework.
                 </span>
               </label>
             </div>

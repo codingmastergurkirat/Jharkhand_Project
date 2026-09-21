@@ -1,27 +1,23 @@
-import { loadEnvConfig } from '@next/env';
+import { loadEnvFile } from 'node:process';
 import { createClient } from '@supabase/supabase-js';
 import WebSocket from 'ws';
 
-loadEnvConfig(process.cwd());
+loadEnvFile('.env.local');
+globalThis.WebSocket = WebSocket as unknown as typeof globalThis.WebSocket;
 
-// Environment variables
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!supabaseUrl || !supabaseServiceKey) {
-  console.error('\n⚠️  ERROR: Missing Supabase credentials in environment.');
+  console.error('\n⚠️  ERROR: Missing backend credentials in environment.');
   console.error('Please configure NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY in .env.local\n');
   process.exit(1);
 }
 
-// Service role client bypasses RLS and manages Auth Admin operations
 const supabase = createClient(supabaseUrl, supabaseServiceKey, {
   auth: {
     autoRefreshToken: false,
     persistSession: false
-  },
-  realtime: {
-    transport: WebSocket
   }
 });
 
@@ -40,13 +36,13 @@ interface SeedAccount {
 }
 
 const SEED_ACCOUNTS: SeedAccount[] = [
-  // 1. Government Admin
+  // 1. National Administrator
   {
-    name: 'Jharkhand State Admin',
-    email: 'admin.jharkhand@gov.in',
-    password: 'Admin@Jharkhand2026',
+    name: 'National Administrator',
+    email: 'admin@jansamadhan.gov.in',
+    password: 'Admin@JanSamadhan2026',
     role: 'admin',
-    org_name: 'Department of Higher & Technical Education, Govt of Jharkhand',
+    org_name: 'Jan Samadhan National Command Center',
     district: 'Ranchi',
     domain_tags: ['Public Administration', 'Education', 'Urban Infrastructure']
   },
@@ -61,7 +57,7 @@ const SEED_ACCOUNTS: SeedAccount[] = [
     submitter_type: 'Citizen'
   },
 
-  // 3. Five Pre-Registered Jharkhand Universities
+  // 3. Five Premier Universities
   {
     name: 'Indian Institute of Technology (ISM) Dhanbad',
     email: 'admin@iitism.ac.in',
@@ -118,7 +114,7 @@ const SEED_ACCOUNTS: SeedAccount[] = [
     facilities: 'Modern infrastructure, placement cells, industry-interface labs'
   },
 
-  // 4. Five Pre-Registered Jharkhand Industries (CSR Partners)
+  // 4. Five Corporate CSR Partners
   {
     name: 'Tata Steel Limited',
     email: 'csr@tatasteel.com',
@@ -138,7 +134,7 @@ const SEED_ACCOUNTS: SeedAccount[] = [
     org_name: 'Central Coalfields Limited (CCL)',
     district: 'Ranchi',
     domain_tags: ['Sanitation', 'Healthcare', 'Energy', 'Environment'],
-    expertise: 'Coal mining, public health initiatives, large-scale sanitation installations',
+    expertise: 'Public health initiatives, large-scale sanitation installations',
     interest_type: 'funding'
   },
   {
@@ -149,7 +145,7 @@ const SEED_ACCOUNTS: SeedAccount[] = [
     org_name: 'Bokaro Steel Plant (SAIL)',
     district: 'Bokaro',
     domain_tags: ['Urban Infrastructure', 'Energy', 'Water Management'],
-    expertise: 'Iron and steel production, heavy industry infrastructure, allied township development',
+    expertise: 'Iron and steel production, heavy industry infrastructure',
     interest_type: 'both'
   },
   {
@@ -171,18 +167,17 @@ const SEED_ACCOUNTS: SeedAccount[] = [
     org_name: 'Uranium Corporation of India Limited (UCIL)',
     district: 'East Singhbhum',
     domain_tags: ['Environment', 'Energy', 'Healthcare'],
-    expertise: 'Nuclear material mining, specialized environmental monitoring',
+    expertise: 'Specialized environmental monitoring and community healthcare',
     interest_type: 'both'
   }
 ];
 
 async function seed() {
   console.log('================================================================');
-  console.log('GOVERNMENT OF JHARKHAND COLLABORATIVE GOVERNANCE PLATFORM');
+  console.log('JAN SAMADHAN (जन समाधान)');
   console.log('Seeding Demo Accounts & Verifying Profiles');
   console.log('================================================================\n');
 
-  // List existing users to avoid re-creation errors
   const { data: userList, error: listError } = await supabase.auth.admin.listUsers();
   if (listError) {
     console.error('Failed to list existing auth users:', listError.message);
@@ -215,7 +210,6 @@ async function seed() {
         email_confirm: true
       });
 
-      // Ensure profile row matches
       await supabase.from('profiles').upsert({
         id: existing.id,
         email: account.email,

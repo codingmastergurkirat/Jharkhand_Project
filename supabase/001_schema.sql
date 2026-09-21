@@ -1,15 +1,24 @@
 -- ==============================================================================
--- GOVERNMENT OF JHARKHAND COLLABORATIVE GOVERNANCE PLATFORM (SIH26043 - Team LIMITLESS)
--- 001_schema.sql: Core Tables, Triggers, and Foreign Keys
--- Run this in the Supabase SQL Editor as the first migration.
+-- JAN SAMADHAN (जन समाधान) - National Public Challenge Resolution Platform
+-- 001_schema.sql: Core Tables, Cascading Drops, Triggers, and Constraints
 -- ==============================================================================
 
--- Enable UUID extension if not already enabled
+-- 1. CLEAN TEARDOWN (Allows complete reset without orphaned dependencies)
+DROP TABLE IF EXISTS public.impact_metrics CASCADE;
+DROP TABLE IF EXISTS public.milestones CASCADE;
+DROP TABLE IF EXISTS public.industry_interests CASCADE;
+DROP TABLE IF EXISTS public.proposal_students CASCADE;
+DROP TABLE IF EXISTS public.proposals CASCADE;
+DROP TABLE IF EXISTS public.problem_supporters CASCADE;
+DROP TABLE IF EXISTS public.problems CASCADE;
+DROP TABLE IF EXISTS public.access_codes CASCADE;
+DROP TABLE IF EXISTS public.profiles CASCADE;
+
+-- Enable UUID extension
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
--- 1. PROFILES TABLE (Linked directly to Supabase Auth)
--- Stores custom profile information for all 4 roles.
-CREATE TABLE IF NOT EXISTS public.profiles (
+-- 2. PROFILES TABLE (Linked directly to Supabase Auth)
+CREATE TABLE public.profiles (
     id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
     name TEXT NOT NULL,
     email TEXT NOT NULL UNIQUE,
@@ -23,9 +32,8 @@ CREATE TABLE IF NOT EXISTS public.profiles (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 2. ACCESS CODES TABLE (For verified University & Industry onboarding)
--- Single-use 8-character codes format: PREFIX-JH-####
-CREATE TABLE IF NOT EXISTS public.access_codes (
+-- 3. ACCESS CODES TABLE (For verified institutional onboarding)
+CREATE TABLE public.access_codes (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     code TEXT UNIQUE NOT NULL,
     role_type TEXT NOT NULL CHECK (role_type IN ('university', 'industry')),
@@ -35,8 +43,9 @@ CREATE TABLE IF NOT EXISTS public.access_codes (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 3. PROBLEMS TABLE (Societal challenges reported by citizens)
-CREATE TABLE IF NOT EXISTS public.problems (
+-- 4. PROBLEMS TABLE (Public challenges reported by citizens)
+-- Note: photo_urls is NOT NULL and requires at least 1 image evidence
+CREATE TABLE public.problems (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     title TEXT NOT NULL,
     description TEXT NOT NULL,
@@ -49,7 +58,7 @@ CREATE TABLE IF NOT EXISTS public.problems (
     lat NUMERIC,
     lng NUMERIC,
     location_source TEXT CHECK (location_source IN ('auto', 'manual')) DEFAULT 'manual',
-    photo_urls TEXT[] DEFAULT '{}',
+    photo_urls TEXT[] NOT NULL CHECK (cardinality(photo_urls) >= 1),
     status TEXT CHECK (status IN (
         'pending', 'assigned', 'in_progress', 'testing', 'completed', 'failed'
     )) DEFAULT 'pending',
@@ -60,8 +69,8 @@ CREATE TABLE IF NOT EXISTS public.problems (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 4. PROBLEM SUPPORTERS JUNCTION TABLE (Enforces 1 vote per citizen)
-CREATE TABLE IF NOT EXISTS public.problem_supporters (
+-- 5. PROBLEM SUPPORTERS JUNCTION TABLE (Enforces 1 vote per citizen)
+CREATE TABLE public.problem_supporters (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     problem_id UUID NOT NULL REFERENCES public.problems(id) ON DELETE CASCADE,
     user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
@@ -69,8 +78,8 @@ CREATE TABLE IF NOT EXISTS public.problem_supporters (
     CONSTRAINT unique_problem_user_support UNIQUE (problem_id, user_id)
 );
 
--- 5. PROPOSALS TABLE (University solution proposals)
-CREATE TABLE IF NOT EXISTS public.proposals (
+-- 6. PROPOSALS TABLE (University solution proposals)
+CREATE TABLE public.proposals (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     problem_id UUID NOT NULL REFERENCES public.problems(id) ON DELETE CASCADE,
     university_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
@@ -88,8 +97,8 @@ CREATE TABLE IF NOT EXISTS public.proposals (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 6. PROPOSAL STUDENTS TABLE (Student team assigned to a proposal)
-CREATE TABLE IF NOT EXISTS public.proposal_students (
+-- 7. PROPOSAL STUDENTS TABLE (Student team assigned to a proposal)
+CREATE TABLE public.proposal_students (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     proposal_id UUID NOT NULL REFERENCES public.proposals(id) ON DELETE CASCADE,
     student_name TEXT NOT NULL,
@@ -97,8 +106,8 @@ CREATE TABLE IF NOT EXISTS public.proposal_students (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 7. INDUSTRY INTERESTS TABLE (CSR Funding & Mentorship pledges)
-CREATE TABLE IF NOT EXISTS public.industry_interests (
+-- 8. INDUSTRY INTERESTS TABLE (Corporate CSR & Mentorship pledges)
+CREATE TABLE public.industry_interests (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     proposal_id UUID NOT NULL REFERENCES public.proposals(id) ON DELETE CASCADE,
     industry_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
@@ -108,8 +117,8 @@ CREATE TABLE IF NOT EXISTS public.industry_interests (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 8. MILESTONES TABLE (Project resolution stages)
-CREATE TABLE IF NOT EXISTS public.milestones (
+-- 9. MILESTONES TABLE (Project resolution stages)
+CREATE TABLE public.milestones (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     problem_id UUID NOT NULL REFERENCES public.problems(id) ON DELETE CASCADE,
     title TEXT NOT NULL,
@@ -118,8 +127,8 @@ CREATE TABLE IF NOT EXISTS public.milestones (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 9. IMPACT METRICS TABLE (Proof of resolution, before/after photos, rating)
-CREATE TABLE IF NOT EXISTS public.impact_metrics (
+-- 10. IMPACT METRICS TABLE (Proof of resolution, before/after photos, ratings)
+CREATE TABLE public.impact_metrics (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     problem_id UUID NOT NULL REFERENCES public.problems(id) ON DELETE CASCADE,
     people_benefited INT DEFAULT 0,
@@ -156,7 +165,7 @@ BEGIN
 
     RETURN NULL;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
 DROP TRIGGER IF EXISTS trigger_sync_support_count ON public.problem_supporters;
 CREATE TRIGGER trigger_sync_support_count
@@ -173,14 +182,12 @@ DECLARE
     v_total_milestones INT;
     v_completed_milestones INT;
 BEGIN
-    -- Handle problem_id gracefully depending on operation
     IF TG_OP = 'DELETE' THEN
         v_problem_id := OLD.problem_id;
     ELSE
         v_problem_id := NEW.problem_id;
     END IF;
 
-    -- Aggregate total and completed milestones
     SELECT 
         COUNT(*),
         COUNT(*) FILTER (WHERE status = 'completed')
@@ -190,14 +197,11 @@ BEGIN
     FROM public.milestones
     WHERE problem_id = v_problem_id;
 
-    -- Apply state machine logic
     IF v_total_milestones > 0 AND v_total_milestones = v_completed_milestones THEN
-        -- All milestones complete
         UPDATE public.problems 
         SET status = 'completed' 
         WHERE id = v_problem_id AND status != 'completed';
     ELSIF v_completed_milestones > 0 THEN
-        -- At least one milestone complete
         UPDATE public.problems 
         SET status = 'in_progress' 
         WHERE id = v_problem_id AND status != 'in_progress';
@@ -205,7 +209,7 @@ BEGIN
 
     RETURN NULL; 
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
 DROP TRIGGER IF EXISTS trigger_sync_problem_status ON public.milestones;
 CREATE TRIGGER trigger_sync_problem_status
@@ -216,7 +220,6 @@ EXECUTE FUNCTION public.sync_problem_status_on_milestone();
 
 
 -- TRIGGER 3: Automatic profile creation upon Supabase auth.users INSERT
--- Rejects public self-signup with 'admin' role. Reads all fields from user_metadata.
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
 DECLARE
@@ -227,12 +230,10 @@ BEGIN
     v_role := COALESCE(NEW.raw_user_meta_data->>'role', 'citizen');
 
     -- Disallow public self-registration with 'admin' role
-    -- Admins must be seeded or created with service_role privileges
     IF v_role = 'admin' AND (CURRENT_USER = 'anon' OR CURRENT_USER = 'authenticated') THEN
         RAISE EXCEPTION 'Administrative accounts cannot be self-registered.';
     END IF;
 
-    -- Extract domain_tags if present
     v_raw_tags := NEW.raw_user_meta_data->'domain_tags';
     IF v_raw_tags IS NOT NULL AND jsonb_typeof(v_raw_tags) = 'array' THEN
         SELECT ARRAY_AGG(x.val::text) INTO v_domain_tags
@@ -274,7 +275,7 @@ BEGIN
 
     RETURN NEW;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
 DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
 CREATE TRIGGER on_auth_user_created
@@ -282,7 +283,7 @@ AFTER INSERT ON auth.users
 FOR EACH ROW
 EXECUTE FUNCTION public.handle_new_user();
 
--- Indexes for performance
+-- Indexes for high performance querying
 CREATE INDEX IF NOT EXISTS idx_problems_district ON public.problems(district);
 CREATE INDEX IF NOT EXISTS idx_problems_domain ON public.problems(domain);
 CREATE INDEX IF NOT EXISTS idx_problems_status ON public.problems(status);

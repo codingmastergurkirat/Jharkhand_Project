@@ -57,13 +57,13 @@ export default function MyCommitments({ industryId }: MyCommitmentsProps) {
           My Pledged CSR Commitments & Sponsorships
         </h2>
         <p className="text-xs text-gray-500">
-          Corporate Social Responsibility partnerships active with Jharkhand state universities.
+          Corporate Social Responsibility partnerships active with partner universities.
         </p>
       </div>
 
       {loading ? (
         <div className="p-8 text-center bg-white rounded-xl border text-sm text-gray-500">
-          Loading commitments from Supabase...
+          Loading commitments...
         </div>
       ) : commitments.length === 0 ? (
         <div className="p-8 text-center bg-white rounded-xl border text-gray-500">

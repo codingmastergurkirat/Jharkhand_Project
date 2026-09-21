@@ -293,7 +293,7 @@ export default function LoginPage() {
                     Institutional Verification Required
                   </div>
                   <p className="mt-1">
-                    Universities and Industries require a single-use 8-character Access Code issued by Jharkhand State Admin (e.g. <code>UNIV-JH-8821</code>).
+                    Universities and Industries require a single-use 8-character Access Code issued by Portal Admin (e.g. <code>UNIV-JH-8821</code>).
                   </p>
                 </div>
               )}
@@ -375,7 +375,7 @@ export default function LoginPage() {
 
               <div>
                 <label className="block text-sm font-bold text-gray-800 mb-1">
-                  Jharkhand District Jurisdiction <span className="text-[#B3261E]">*</span>
+                  District Jurisdiction <span className="text-[#B3261E]">*</span>
                 </label>
                 <select
                   value={regDistrict}

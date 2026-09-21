@@ -110,7 +110,7 @@ export default function AdminDashboardPage() {
         id: u.id,
         name: u.org_name || u.name,
         category: 'University' as const,
-        district: u.district || 'Jharkhand',
+        district: u.district || 'Ranchi',
         undertaken: count,
         completed: done,
         resolutionRate: Math.round((done / count) * 100),
@@ -120,7 +120,7 @@ export default function AdminDashboardPage() {
       id: ind.id,
       name: ind.org_name || ind.name,
       category: 'Industry' as const,
-      district: ind.district || 'Jharkhand',
+      district: ind.district || 'Jamshedpur',
       undertaken: 2,
       completed: 1,
       resolutionRate: 50,
@@ -136,10 +136,10 @@ export default function AdminDashboardPage() {
         <div>
           <div className="flex items-center gap-2 text-xs font-bold text-[#1B5E20] uppercase tracking-wider mb-1">
             <ShieldAlert className="w-4 h-4 text-[#1B5E20]" />
-            Department of Higher & Technical Education • State Command Center
+            Department of Higher & Technical Education • Apex Command Center
           </div>
           <h1 className="text-2xl font-bold text-gray-900">
-            Jharkhand State Governance Administrator Dashboard
+            Jan Samadhan Administrator Dashboard
           </h1>
           <p className="text-sm text-gray-600 mt-0.5">
             Full operational oversight of societal assignments, university R&D allocation, corporate CSR pledges, and verification proofs.
@@ -148,7 +148,7 @@ export default function AdminDashboardPage() {
 
         <div className="text-right">
           <span className="inline-block px-3 py-1 bg-green-100 text-[#1B5E20] border border-green-300 rounded-full text-xs font-bold">
-            👑 State Administrative Jurisdiction
+            👑 Apex Administrative Jurisdiction
           </span>
         </div>
       </div>
@@ -157,7 +157,7 @@ export default function AdminDashboardPage() {
       {(!currentUser || userProfile?.role !== 'admin') && (
         <div className="p-4 bg-amber-50 border border-amber-300 rounded-xl text-xs text-amber-900 space-y-3">
           <p>
-            <strong>⚠️ Evaluator Notice:</strong> You are currently viewing in preview mode. Click below to instantly log in as <strong>Jharkhand State Admin (admin.jharkhand@gov.in)</strong>:
+            <strong>⚠️ Evaluator Notice:</strong> You are currently viewing in preview mode. Click below to instantly log in as <strong>Portal Admin (admin.jharkhand@gov.in)</strong>:
           </p>
           <QuickLoginDrawer />
         </div>
@@ -174,7 +174,7 @@ export default function AdminDashboardPage() {
           }`}
         >
           <BarChart3 className="w-4 h-4" />
-          State Impact & Analytics
+          Impact & Analytics
         </button>
 
         <button

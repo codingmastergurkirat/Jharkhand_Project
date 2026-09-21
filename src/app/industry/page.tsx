@@ -48,7 +48,7 @@ export default function IndustryDashboardPage() {
         <div>
           <div className="flex items-center gap-2 text-xs font-bold text-[#1B5E20] uppercase tracking-wider mb-1">
             <Building2 className="w-4 h-4" />
-            Jharkhand CSR & Industry Engagement Network
+            National CSR & Industry Engagement Network
           </div>
           <h1 className="text-2xl font-bold text-gray-900">
             {activeIndustry.org_name || activeIndustry.name}

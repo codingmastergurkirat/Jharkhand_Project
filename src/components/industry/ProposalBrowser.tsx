@@ -101,7 +101,7 @@ export default function ProposalBrowser({ industryId }: ProposalBrowserProps) {
               onChange={(e) => setDistrictFilter(e.target.value)}
               className="text-xs border rounded-lg px-3 py-2 bg-white focus:ring-2 focus:ring-[#E65100] focus:outline-none"
             >
-              <option value="all">All 24 Districts</option>
+              <option value="all">All Districts</option>
               {JHARKHAND_DISTRICTS.map((dist) => (
                 <option key={dist} value={dist}>
                   {dist}
@@ -115,7 +115,7 @@ export default function ProposalBrowser({ industryId }: ProposalBrowserProps) {
       {/* Proposals Grid */}
       {loading ? (
         <div className="p-8 text-center bg-white rounded-xl border text-sm text-gray-500">
-          Loading vetted university proposals from Supabase...
+          Loading vetted university proposals...
         </div>
       ) : filtered.length === 0 ? (
         <div className="p-8 text-center bg-white rounded-xl border text-gray-500">
@@ -163,6 +163,33 @@ export default function ProposalBrowser({ industryId }: ProposalBrowserProps) {
                   <p className="text-xs text-gray-600 line-clamp-3 mb-3">
                     {p.description}
                   </p>
+
+                  {/* Citizen Photographic Evidence */}
+                  {prob.photo_urls && prob.photo_urls.length > 0 && (
+                    <div className="mb-3">
+                      <div className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1">
+                        📷 Ground Problem Evidence ({prob.photo_urls.length}):
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {prob.photo_urls.map((url: string, pIdx: number) => (
+                          <a
+                            key={pIdx}
+                            href={url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="group relative rounded-md overflow-hidden border border-gray-200 hover:border-[#1B5E20] transition bg-gray-50"
+                            title="Open evidence photo in new tab"
+                          >
+                            <img
+                              src={url}
+                              alt={`Evidence ${pIdx + 1}`}
+                              className="w-16 h-12 object-cover group-hover:scale-105 transition"
+                            />
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
                   {/* University & Mentor Strip */}
                   <div className="bg-[#F8F9FA] p-3 rounded-lg border text-xs space-y-1.5 mb-4">

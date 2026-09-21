@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { useToast } from '@/components/common/Toast';
 import CitizenRatingModal from './CitizenRatingModal';
-import { Clock, MapPin, Tag, ThumbsUp, CheckCircle, AlertCircle, Award, ChevronRight } from 'lucide-react';
+import { Clock, MapPin, Tag, ThumbsUp, CheckCircle, AlertCircle, Award, ChevronRight, Image as ImageIcon, X } from 'lucide-react';
 
 interface TrackReportsProps {
   userId?: string;
@@ -18,6 +18,7 @@ export default function TrackReports({ userId, refreshTrigger }: TrackReportsPro
   const [problems, setProblems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [ratingProblem, setRatingProblem] = useState<any | null>(null);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   const fetchProblems = async () => {
     setLoading(true);
@@ -93,10 +94,10 @@ export default function TrackReports({ userId, refreshTrigger }: TrackReportsPro
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-lg font-bold text-gray-900">
-            {userId ? 'My Submitted Public Reports' : 'Recent Societal Reports in Jharkhand'}
+            {userId ? 'My Submitted Public Reports' : 'Recent Societal Reports'}
           </h2>
           <p className="text-xs text-gray-500">
-            Live database tracking powered by Supabase with transparent milestone progression.
+            Live database tracking with transparent milestone progression.
           </p>
         </div>
         <button
@@ -109,7 +110,7 @@ export default function TrackReports({ userId, refreshTrigger }: TrackReportsPro
 
       {loading ? (
         <div className="p-8 text-center text-sm text-gray-500 bg-white rounded-xl border">
-          Loading report milestones from Supabase...
+          Loading report milestones...
         </div>
       ) : problems.length === 0 ? (
         <div className="p-8 text-center bg-white rounded-xl border text-gray-500">
@@ -154,6 +155,35 @@ export default function TrackReports({ userId, refreshTrigger }: TrackReportsPro
                 <p className="text-sm text-gray-600 line-clamp-2 mb-3">
                   {prob.description}
                 </p>
+
+                {/* Photographic Evidence Gallery */}
+                {prob.photo_urls && prob.photo_urls.length > 0 && (
+                  <div className="mb-3">
+                    <div className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5 flex items-center gap-1">
+                      <ImageIcon className="w-3.5 h-3.5 text-gray-400" />
+                      Citizen Photo Evidence ({prob.photo_urls.length}):
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {prob.photo_urls.map((url: string, pIdx: number) => (
+                        <button
+                          key={pIdx}
+                          type="button"
+                          onClick={() => setSelectedImage(url)}
+                          className="group relative rounded-lg overflow-hidden border border-gray-200 hover:border-[#1B5E20] focus:ring-2 focus:ring-[#1B5E20] transition bg-gray-50"
+                        >
+                          <img
+                            src={url}
+                            alt={`Evidence ${pIdx + 1}`}
+                            className="w-20 h-14 object-cover group-hover:scale-105 transition duration-200"
+                          />
+                          <span className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white text-[10px] font-bold">
+                            Zoom
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
                 {/* Assigned Institution & Milestone Progress */}
                 <div className="bg-[#F8F9FA] rounded-lg p-3 text-xs space-y-2 border">
@@ -228,6 +258,39 @@ export default function TrackReports({ userId, refreshTrigger }: TrackReportsPro
           onClose={() => setRatingProblem(null)}
           onSuccess={fetchProblems}
         />
+      )}
+
+      {/* Evidence Image Zoom Modal */}
+      {selectedImage && (
+        <div
+          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
+          onClick={() => setSelectedImage(null)}
+        >
+          <div
+            className="relative max-w-4xl max-h-[90vh] bg-white rounded-xl overflow-hidden shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between p-3 border-b bg-gray-50">
+              <span className="text-xs font-bold text-gray-700 flex items-center gap-1.5">
+                <ImageIcon className="w-4 h-4 text-[#1B5E20]" />
+                Ground Problem Evidence (DPDP Act 2023 Compliant)
+              </span>
+              <button
+                onClick={() => setSelectedImage(null)}
+                className="p-1 text-gray-500 hover:text-gray-900 rounded-lg hover:bg-gray-200 min-h-[32px] min-w-[32px] flex items-center justify-center"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="p-2 bg-black flex items-center justify-center">
+              <img
+                src={selectedImage}
+                alt="Evidence Full View"
+                className="max-h-[75vh] w-auto object-contain rounded"
+              />
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

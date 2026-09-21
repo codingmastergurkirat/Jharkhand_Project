@@ -65,10 +65,10 @@ export default function OverrideCenter({
       <div>
         <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2">
           <ArrowRightLeft className="w-4 h-4 text-[#1B5E20]" />
-          State Assignment Override Center (Explainable Matching)
+          Assignment Override Center (Explainable Matching)
         </h3>
         <p className="text-xs text-gray-500">
-          Transparent algorithmic matching suggests top institutions. State Administrators hold statutory authority to override or re-assign based on ground priorities.
+          Transparent algorithmic matching suggests top institutions. Administrators hold statutory authority to override or re-assign based on ground priorities.
         </p>
       </div>
 
@@ -109,6 +109,37 @@ export default function OverrideCenter({
                     Status: {prob.status}
                   </span>
                 </div>
+
+                <p className="text-xs text-gray-600 line-clamp-2">
+                  {prob.description}
+                </p>
+
+                {/* Citizen Photographic Evidence */}
+                {prob.photo_urls && prob.photo_urls.length > 0 && (
+                  <div>
+                    <div className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1">
+                      📷 Citizen Photographic Evidence ({prob.photo_urls.length}):
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {prob.photo_urls.map((url: string, pIdx: number) => (
+                        <a
+                          key={pIdx}
+                          href={url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="group relative rounded overflow-hidden border border-gray-200 hover:border-[#1B5E20] transition bg-gray-50"
+                          title="Open photo evidence in new tab"
+                        >
+                          <img
+                            src={url}
+                            alt={`Evidence ${pIdx + 1}`}
+                            className="w-16 h-12 object-cover group-hover:scale-105 transition"
+                          />
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
                 {/* Top Algorithmic Match Banner */}
                 {topMatch && (

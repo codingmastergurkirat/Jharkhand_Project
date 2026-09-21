@@ -45,7 +45,7 @@ export default function LessonsLearned() {
       <div>
         <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
           <BookOpen className="w-5 h-5 text-[#1B5E20]" />
-          State Knowledge Base: Lessons Learned & Failed Solution Attempts
+          Open Knowledge Base: Lessons Learned & Technical Constraints
         </h2>
         <p className="text-xs text-gray-500">
           Open institutional archive capturing technical bottlenecks, pilot limitations, and feasibility constraints to accelerate future R&D.
@@ -74,7 +74,7 @@ export default function LessonsLearned() {
                     {item.problem?.domain || 'General'}
                   </span>
                   <span className="text-gray-500 font-medium">
-                    {item.problem?.district || 'Jharkhand'} District
+                    {item.problem?.district || 'Registered'} District
                   </span>
                 </div>
 

@@ -18,10 +18,10 @@ interface QuickAccount {
 const DEMO_ACCOUNTS: QuickAccount[] = [
   {
     role: 'admin',
-    name: 'Jharkhand State Admin',
+    name: 'Jan Samadhan Administrator',
     email: 'admin.jharkhand@gov.in',
     pass: 'Admin@Jharkhand2026',
-    badge: '👑 State Admin',
+    badge: '👑 Portal Admin',
     route: '/admin'
   },
   {
@@ -77,7 +77,7 @@ const DEMO_ACCOUNTS: QuickAccount[] = [
     name: 'Tata Steel Limited',
     email: 'csr@tatasteel.com',
     pass: 'Ind@Tata2026',
-    badge: '🏭 Industry (CSR Both)',
+    badge: '🏭 Industry Partner',
     route: '/industry'
   },
   {
@@ -85,7 +85,7 @@ const DEMO_ACCOUNTS: QuickAccount[] = [
     name: 'Central Coalfields Ltd (CCL)',
     email: 'csr@centralcoalfields.in',
     pass: 'Ind@CCL2026',
-    badge: '🏭 Industry (Funding)',
+    badge: '🏭 Industry Partner',
     route: '/industry'
   },
   {
@@ -93,7 +93,7 @@ const DEMO_ACCOUNTS: QuickAccount[] = [
     name: 'Bokaro Steel Plant (SAIL)',
     email: 'csr@sailbokaro.in',
     pass: 'Ind@SAIL2026',
-    badge: '🏭 Industry (Both)',
+    badge: '🏭 Industry Partner',
     route: '/industry'
   },
   {
@@ -101,7 +101,7 @@ const DEMO_ACCOUNTS: QuickAccount[] = [
     name: 'Eastern Coalfields Ltd (ECL)',
     email: 'csr@easterncoal.gov.in',
     pass: 'Ind@ECL2026',
-    badge: '🏭 Industry (Funding)',
+    badge: '🏭 Industry Partner',
     route: '/industry'
   },
   {
@@ -109,7 +109,7 @@ const DEMO_ACCOUNTS: QuickAccount[] = [
     name: 'Uranium Corp (UCIL)',
     email: 'contact@ucil.gov.in',
     pass: 'Ind@UCIL2026',
-    badge: '🏭 Industry (Both)',
+    badge: '🏭 Industry Partner',
     route: '/industry'
   }
 ];
@@ -159,7 +159,7 @@ export default function QuickLoginDrawer() {
             1-Click Demo Evaluation Logins
           </h2>
           <p className="text-xs text-[#49454F]">
-            Instant credentials for all pre-seeded roles. Clicking will automatically authenticate via live Supabase Auth.
+            Instant credentials for all pre-seeded roles. Clicking will automatically authenticate via live secure Auth.
           </p>
         </div>
       </div>

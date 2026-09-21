@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useToast } from './Toast';
 import { createClient } from '@/lib/supabase/client';
-import { User, LogOut, Globe, Shield, Landmark } from 'lucide-react';
+import { User, LogOut, Globe, Landmark } from 'lucide-react';
 
 export default function Header() {
   const { showToast } = useToast();
@@ -16,7 +16,6 @@ export default function Header() {
   const [language, setLanguage] = useState<'en' | 'hi'>('en');
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [userProfile, setUserProfile] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadUser() {
@@ -33,8 +32,6 @@ export default function Header() {
         }
       } catch (err) {
         console.error('Failed to load user:', err);
-      } finally {
-        setLoading(false);
       }
     }
 
@@ -80,22 +77,22 @@ export default function Header() {
     { href: '/citizen', label: 'Citizen Portal' },
     { href: '/university', label: 'University Portal' },
     { href: '/industry', label: 'Industry CSR' },
-    { href: '/admin', label: 'Gov Admin' },
+    { href: '/admin', label: 'Admin Command' },
   ];
 
   return (
     <header className="w-full bg-[#1B5E20] text-white shadow-md">
-      {/* Top Accessibility & Official Identification Strip */}
+      {/* Top Accessibility Strip */}
       <div className="bg-[#144718] text-xs px-4 py-1.5 border-b border-green-800">
         <div className="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-2">
           <div className="flex items-center gap-2">
-            <span className="font-semibold tracking-wide">झारखण्ड सरकार | Government of Jharkhand</span>
+            <span className="font-semibold tracking-wide">जन समाधान | Jan Samadhan</span>
             <span className="text-green-300">|</span>
-            <span className="text-green-200">SIH26043 - Team LIMITLESS</span>
+            <span className="text-green-200">National Citizen Problem Resolution Platform</span>
           </div>
 
           <div className="flex items-center gap-4">
-            {/* Language Switcher Affordance */}
+            {/* Language Switcher */}
             <div className="flex items-center gap-1 text-xs" role="group" aria-label="Language Selector">
               <Globe className="w-3.5 h-3.5 text-amber-300" aria-hidden="true" />
               <button
@@ -119,7 +116,7 @@ export default function Header() {
               </button>
             </div>
 
-            {/* Live Active Profile Badge */}
+            {/* Live Profile Indicator */}
             {currentUser && userProfile && (
               <div className="flex items-center gap-1.5 text-xs bg-green-900/60 px-2 py-0.5 rounded border border-green-700">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
@@ -140,10 +137,10 @@ export default function Header() {
           </div>
           <div>
             <h1 className="text-lg sm:text-xl font-bold tracking-tight text-white leading-tight">
-              Jharkhand Pragati Setu
+              Jan Samadhan (जन समाधान)
             </h1>
             <p className="text-xs text-green-200 font-medium">
-              Collaborative Governance & Societal Problem Resolution Portal
+              Collaborative Public Challenge Resolution & Innovation Portal
             </p>
           </div>
         </Link>

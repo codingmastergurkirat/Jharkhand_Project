@@ -1,15 +1,13 @@
-# Government of Jharkhand Collaborative Governance Portal
-## SIH26043 - Team LIMITLESS | Demonstration Credentials Reference
+# Jan Samadhan (जन समाधान) — Demonstration Credentials Reference
 
-> [!CAUTION]
-> **DEMO USE ONLY**: The following accounts and credentials are pre-configured strictly for local evaluation, hackathon judging, and platform demonstration. Do NOT utilize these credentials in production environments.
+> **DEMO USE ONLY**: The following accounts and credentials are pre-configured strictly for local evaluation, judging, and platform demonstration. Do NOT utilize these credentials in production environments.
 
 ---
 
-### 1. State Administrator Account
+### 1. Portal Administrator Account
 | Organization / Name | Role | Email Address | Password | Jurisdiction |
 | :--- | :--- | :--- | :--- | :--- |
-| **Jharkhand State Admin** | `admin` | `admin.jharkhand@gov.in` | `Admin@Jharkhand2026` | State of Jharkhand (All 24 Districts) |
+| **Jan Samadhan Administrator** | `admin` | `admin.jharkhand@gov.in` | `Admin@Jharkhand2026` | National Administrative Jurisdiction |
 
 ---
 
@@ -20,7 +18,7 @@
 
 ---
 
-### 3. Pre-Registered Jharkhand Universities
+### 3. Pre-Registered Universities (R&D Execution Partners)
 | Institution Name | Role | Email Address | Password | District | Domain Specializations |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **IIT (ISM) Dhanbad** | `university` | `admin@iitism.ac.in` | `Univ@IITISM2026` | Dhanbad | Environment, Energy, Urban Infrastructure, Water Management |
@@ -31,7 +29,7 @@
 
 ---
 
-### 4. Pre-Registered Jharkhand Industries (CSR Partners)
+### 4. Pre-Registered Corporate Partners (CSR Engagement)
 | Enterprise Name | Role | Email Address | Password | District | Primary CSR Focus | Preferred Support |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | **Tata Steel Limited** | `industry` | `csr@tatasteel.com` | `Ind@Tata2026` | East Singhbhum | Healthcare, Education, Rural Livelihoods, Urban Infrastructure | Both (Funding & Mentorship) |
@@ -51,5 +49,4 @@ To test verified institutional onboarding, select **University** or **Industry**
 | `UNIV-JH-4409` | `university` | Vinoba Bhave University | **Available (Unused)** |
 | `IND-JH-9132` | `industry` | Hindalco Industries | **Available (Unused)** |
 
-> [!TIP]
-> **One-Click Quick Login**: The `/login` page features a built-in Quick-Login demo drawer. Clicking any role badge will automatically fill and authenticate the selected account with a single click.
+> **One-Click Quick Login**: The `/login` page and homepage feature a built-in Quick-Login demo drawer. Clicking any role badge will automatically authenticate the selected account with a single click.

@@ -26,15 +26,15 @@ export default function HomePage() {
         <div className="max-w-3xl space-y-4 relative z-10">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-emerald-200 text-xs font-bold backdrop-blur-sm border border-white/20">
             <ShieldCheck className="w-4 h-4 text-emerald-300" />
-            <span>SIH26043 • Team LIMITLESS • Live Supabase Governance Portal</span>
+            <span>Jan Samadhan • Unified Citizen Problem Resolution & R&D Portal</span>
           </div>
 
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight leading-tight">
-            Connecting Citizen Challenges with Jharkhand Innovation.
+            Connecting Citizen Challenges with National Innovation.
           </h1>
 
           <p className="text-sm sm:text-base text-gray-200 leading-relaxed max-w-2xl">
-            A collaborative governance platform where citizens report ground challenges, a transparent scoring engine pairs issues with Universities, Industries offer CSR funding, and Government oversees statewide resolution.
+            A collaborative governance platform where citizens report ground challenges, a transparent scoring engine pairs issues with Universities, Industries offer CSR funding, and Government oversees nationwide resolution.
           </p>
 
           {/* Quick Action Buttons */}
@@ -60,7 +60,7 @@ export default function HomePage() {
               className="px-6 py-3 bg-white text-[#1B5E20] hover:bg-gray-100 font-bold rounded-xl text-sm shadow transition flex items-center gap-2 min-h-[44px]"
             >
               <BarChart3 className="w-5 h-5 text-[#1B5E20]" />
-              <span>View State Impact</span>
+              <span>View Public Impact</span>
             </Link>
           </div>
         </div>
@@ -142,9 +142,9 @@ export default function HomePage() {
               <div className="w-10 h-10 rounded-lg bg-amber-50 text-[#E65100] flex items-center justify-center font-bold mb-3 border border-amber-200">
                 <BarChart3 className="w-5 h-5" />
               </div>
-              <h3 className="text-base font-bold text-gray-900">Government Admin</h3>
+              <h3 className="text-base font-bold text-gray-900">Portal Admin</h3>
               <p className="text-xs text-gray-600 mt-1 leading-relaxed">
-                Oversee state-wide impact analytics, override algorithmic assignments, issue single-use institutional access codes, and audit Before/After proofs.
+                Oversee national impact analytics, override algorithmic assignments, issue single-use institutional access codes, and audit Before/After proofs.
               </p>
             </div>
             <Link
@@ -170,7 +170,7 @@ export default function HomePage() {
           Transparent, Explainable Rule-Based Matching Algorithm
         </h2>
         <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
-          Unlike opaque AI models, this platform employs a 100% deterministic, explainable scoring engine to allocate public problems to academic institutions across Jharkhand:
+          Unlike opaque AI models, this platform employs a 100% deterministic, explainable scoring engine to allocate public problems to academic institutions:
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
@@ -197,7 +197,7 @@ export default function HomePage() {
         </div>
 
         <div className="p-3 bg-green-50 border border-green-200 rounded-lg text-xs text-green-900 font-medium">
-          <strong>Administrative Governance Rule:</strong> While top scoring universities are suggested automatically, the State Administrator can review scoring transparency and override assignments with one click.
+          <strong>Administrative Governance Rule:</strong> While top scoring universities are suggested automatically, the Portal Administrator can review scoring transparency and override assignments with one click.
         </div>
       </section>
     </div>

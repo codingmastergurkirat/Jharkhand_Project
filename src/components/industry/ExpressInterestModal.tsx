@@ -70,9 +70,36 @@ export default function ExpressInterestModal({
           <Building className="w-5 h-5 text-[#1B5E20]" />
           Express Corporate CSR Interest
         </h3>
-        <p className="text-xs text-gray-600 mb-4">
+        <p className="text-xs text-gray-600 mb-2">
           Proposal: <span className="font-bold text-gray-900">{proposal.problem?.title || 'Selected Project'}</span>
         </p>
+
+        {/* Citizen Evidence Photos */}
+        {proposal.problem?.photo_urls && proposal.problem?.photo_urls.length > 0 && (
+          <div className="mb-4 bg-gray-50 p-2.5 rounded-lg border">
+            <div className="text-[11px] font-bold text-gray-600 uppercase tracking-wider mb-1">
+              📷 Citizen Ground Evidence ({proposal.problem.photo_urls.length}):
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {proposal.problem.photo_urls.map((url: string, idx: number) => (
+                <a
+                  key={idx}
+                  href={url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group relative rounded overflow-hidden border border-gray-300 hover:border-[#1B5E20] transition"
+                  title="Open evidence photo in new tab"
+                >
+                  <img
+                    src={url}
+                    alt={`Evidence ${idx + 1}`}
+                    className="w-16 h-12 object-cover group-hover:scale-105 transition duration-200"
+                  />
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Support Type Selector */}

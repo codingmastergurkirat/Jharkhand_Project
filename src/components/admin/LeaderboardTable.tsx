@@ -28,7 +28,7 @@ export default function LeaderboardTable({ entries }: LeaderboardTableProps) {
             Institutional & Corporate Performance Ledger
           </h3>
           <p className="text-xs text-gray-500">
-            Official audit of societal projects undertaken, completed, and resolution efficiency across Jharkhand.
+            Official audit of societal projects undertaken, completed, and resolution efficiency across partner institutions.
           </p>
         </div>
       </div>

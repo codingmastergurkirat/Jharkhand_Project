@@ -86,7 +86,7 @@ export default function MilestoneTracker({ problems, onRefresh }: MilestoneTrack
             Active Milestone Progression & Field Validation
           </h2>
           <p className="text-xs text-gray-500">
-            Automated State Machine: Checking off all milestones triggers the Supabase trigger to transition problem status to Completed.
+            Automated State Machine: Checking off all milestones triggers the automated database trigger to transition problem status to Completed.
           </p>
         </div>
       </div>

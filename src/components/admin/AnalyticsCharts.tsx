@@ -62,7 +62,7 @@ export default function AnalyticsCharts({ domainCounts, districtCounts }: Analyt
               <PieChart className="w-4 h-4 text-[#E65100]" />
               District-Wise Citizen Reporting Volume
             </h3>
-            <p className="text-xs text-gray-500">Top active jurisdictions in Jharkhand</p>
+            <p className="text-xs text-gray-500">Top active administrative jurisdictions</p>
           </div>
         </div>
 

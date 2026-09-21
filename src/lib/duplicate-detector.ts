@@ -1,5 +1,5 @@
 // ==============================================================================
-// Government of Jharkhand Collaborative Governance Platform
+// Jan Samadhan Collaborative Governance Platform
 // Duplicate Detection Engine (Token Overlap & Fuzzy Jaccard Similarity)
 // ==============================================================================
 

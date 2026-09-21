@@ -1,5 +1,5 @@
 // ==============================================================================
-// Government of Jharkhand Collaborative Governance Platform
+// Jan Samadhan Collaborative Governance Platform
 // Deterministic Matching Engine (Explainable, Transparent Scoring)
 // ==============================================================================
 

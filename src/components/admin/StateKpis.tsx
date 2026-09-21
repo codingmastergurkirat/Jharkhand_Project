@@ -27,7 +27,7 @@ export default function StateKpis({ metrics }: StateKpisProps) {
         <div className="text-2xl font-bold text-gray-900 mt-2 font-mono">
           {metrics.totalProblems}
         </div>
-        <p className="text-[11px] text-gray-500 mt-1">Across all 24 Jharkhand districts</p>
+        <p className="text-[11px] text-gray-500 mt-1">Across registered administrative districts</p>
       </div>
 
       {/* 2. Under Resolution */}

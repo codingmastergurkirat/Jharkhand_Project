@@ -147,6 +147,11 @@ export default function ProblemSubmissionWizard({ userId, onSuccess }: ProblemSu
       return;
     }
 
+    if (photoUrls.length === 0) {
+      showToast('Photographic evidence is mandatory. Please upload at least 1 image.', 'error');
+      return;
+    }
+
     setSubmitting(true);
     try {
       const fullDescription = landmark.trim()
@@ -162,7 +167,7 @@ export default function ProblemSubmissionWizard({ userId, onSuccess }: ProblemSu
           description: fullDescription,
           domain,
           district,
-          lat: latitude || 23.3441, // Default fallback coordinates for Ranchi
+          lat: latitude || 23.3441, // Default fallback coordinates
           lng: longitude || 85.3096,
           location_source: geoCaptured ? 'auto' : 'manual',
           photo_urls: photoUrls,
@@ -176,7 +181,7 @@ export default function ProblemSubmissionWizard({ userId, onSuccess }: ProblemSu
       if (error) {
         showToast(error.message, 'error');
       } else {
-        showToast('Societal problem successfully registered with Jharkhand Government!', 'success');
+        showToast('Societal problem successfully registered with Jan Samadhan portal!', 'success');
         onSuccess();
       }
     } catch (err: any) {
@@ -317,14 +322,14 @@ export default function ProblemSubmissionWizard({ userId, onSuccess }: ProblemSu
             <div>
               <span className="font-bold">DPDP Act 2023 Data Minimisation Notice:</span>
               <p className="mt-0.5 leading-relaxed text-blue-800">
-                To protect citizen privacy, exact GPS coordinates are masked from public and industry users, and visible only to authorized Jharkhand district administrators.
+                To protect citizen privacy, exact GPS coordinates are masked from public view, and visible only to authorized governance administrators.
               </p>
             </div>
           </div>
 
           <div>
             <label className="block text-sm font-bold text-gray-800 mb-1">
-              Select Jharkhand District <span className="text-[#B3261E]">*</span>
+              Select District <span className="text-[#B3261E]">*</span>
             </label>
             <select
               value={district}
@@ -388,16 +393,18 @@ export default function ProblemSubmissionWizard({ userId, onSuccess }: ProblemSu
       {currentStep === 3 && (
         <div className="space-y-5">
           <div>
-            <h3 className="text-base font-bold text-gray-900 mb-1">
-              Step 3: Attach Photographic Evidence (1 to 3 Photos)
+            <h3 className="text-base font-bold text-gray-900 mb-1 flex items-center gap-1.5">
+              Step 3: Attach Photographic Evidence <span className="text-[#B3261E] text-xs font-bold bg-red-50 border border-red-200 px-2 py-0.5 rounded-full">* Mandatory</span>
             </h3>
             <p className="text-xs text-gray-500">
-              Photographs or PDF inspection reports assist universities and CSR partners in assessing the ground situation.
+              Photographs or PDF inspection reports assist universities and CSR partners in assessing the ground situation. At least 1 photo is required.
             </p>
           </div>
 
           {/* Upload Area */}
-          <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-[#1B5E20] transition bg-gray-50">
+          <div className={`border-2 border-dashed rounded-xl p-6 text-center transition ${
+            photoUrls.length === 0 ? 'border-amber-400 bg-amber-50/50' : 'border-gray-300 bg-gray-50 hover:border-[#1B5E20]'
+          }`}>
             <input
               type="file"
               id="file-upload"
@@ -415,30 +422,40 @@ export default function ProblemSubmissionWizard({ userId, onSuccess }: ProblemSu
             >
               <Upload className="w-8 h-8 text-[#1B5E20]" />
               <span className="text-sm font-bold text-[#1B5E20] hover:underline">
-                {uploading ? 'Uploading to Supabase Storage...' : 'Click to select images or documents'}
+                {uploading ? 'Uploading Evidence...' : 'Click to select images or documents'}
               </span>
               <span className="text-xs text-gray-500">
-                Supports JPG, PNG, WebP, PDF (Max 3 files, up to 5MB each)
+                Supports JPG, PNG, WebP, PDF (1 to 3 files required, up to 5MB each)
               </span>
             </label>
           </div>
 
           {/* Previews */}
-          {photoUrls.length > 0 && (
-            <div className="grid grid-cols-3 gap-3">
-              {photoUrls.map((url, idx) => (
-                <div key={idx} className="relative rounded-lg overflow-hidden border bg-gray-100 aspect-video group">
-                  <img src={url} alt={`Evidence preview ${idx + 1}`} className="w-full h-full object-cover" />
-                  <button
-                    type="button"
-                    onClick={() => removePhoto(idx)}
-                    className="absolute top-1 right-1 bg-red-600 text-white rounded-full p-1 shadow hover:bg-red-700 min-h-[30px] min-w-[30px] flex items-center justify-center"
-                    aria-label="Remove image"
-                  >
-                    <X className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              ))}
+          {photoUrls.length > 0 ? (
+            <div className="space-y-1">
+              <div className="text-xs font-bold text-green-800 flex items-center gap-1">
+                <CheckCircle className="w-3.5 h-3.5" />
+                {photoUrls.length} evidence photo(s) attached:
+              </div>
+              <div className="grid grid-cols-3 gap-3">
+                {photoUrls.map((url, idx) => (
+                  <div key={idx} className="relative rounded-lg overflow-hidden border bg-gray-100 aspect-video group">
+                    <img src={url} alt={`Evidence preview ${idx + 1}`} className="w-full h-full object-cover" />
+                    <button
+                      type="button"
+                      onClick={() => removePhoto(idx)}
+                      className="absolute top-1 right-1 bg-red-600 text-white rounded-full p-1 shadow hover:bg-red-700 min-h-[30px] min-w-[30px] flex items-center justify-center"
+                      aria-label="Remove image"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-xs text-red-700 font-medium">
+              ⚠️ Please attach at least 1 photo of the problem before proceeding. Unverified submissions cannot be processed.
             </div>
           )}
 
@@ -453,8 +470,19 @@ export default function ProblemSubmissionWizard({ userId, onSuccess }: ProblemSu
             </button>
             <button
               type="button"
-              onClick={() => setCurrentStep(4)}
-              className="px-6 py-2.5 bg-[#1B5E20] hover:bg-green-800 text-white font-bold rounded-lg shadow flex items-center gap-2 min-h-[44px]"
+              onClick={() => {
+                if (photoUrls.length === 0) {
+                  showToast('Photographic evidence is mandatory. Please upload at least 1 image.', 'error');
+                  return;
+                }
+                setCurrentStep(4);
+              }}
+              disabled={photoUrls.length === 0}
+              className={`px-6 py-2.5 font-bold rounded-lg shadow flex items-center gap-2 min-h-[44px] ${
+                photoUrls.length > 0
+                  ? 'bg-[#1B5E20] hover:bg-green-800 text-white'
+                  : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+              }`}
             >
               Next: DPDP Review & Submit
               <ArrowRight className="w-4 h-4" />
@@ -485,7 +513,7 @@ export default function ProblemSubmissionWizard({ userId, onSuccess }: ProblemSu
           )}
 
           {/* Summary Card */}
-          <div className="bg-[#F8F9FA] rounded-xl p-4 border text-sm space-y-2">
+          <div className="bg-[#F8F9FA] rounded-xl p-4 border text-sm space-y-3">
             <div>
               <span className="text-gray-500 text-xs font-bold uppercase">Title:</span>
               <p className="font-bold text-gray-900">{title}</p>
@@ -501,8 +529,12 @@ export default function ProblemSubmissionWizard({ userId, onSuccess }: ProblemSu
               </div>
             </div>
             <div>
-              <span className="text-gray-500 text-xs">Evidence Attached:</span>
-              <p className="font-semibold text-gray-900">{photoUrls.length} file(s)</p>
+              <span className="text-gray-500 text-xs font-bold block mb-1">Evidence Photos ({photoUrls.length}):</span>
+              <div className="flex gap-2">
+                {photoUrls.map((url, i) => (
+                  <img key={i} src={url} alt={`Evidence ${i+1}`} className="w-16 h-12 object-cover rounded border" />
+                ))}
+              </div>
             </div>
           </div>
 

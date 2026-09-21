@@ -119,6 +119,33 @@ export default function MatchQueue({ problems, university, onRefresh }: MatchQue
                   {prob.description}
                 </p>
 
+                {/* Citizen Photographic Evidence */}
+                {prob.photo_urls && prob.photo_urls.length > 0 && (
+                  <div className="mb-3">
+                    <div className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1">
+                      📷 Citizen Ground Evidence ({prob.photo_urls.length}):
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {prob.photo_urls.map((url: string, pIdx: number) => (
+                        <a
+                          key={pIdx}
+                          href={url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="group relative rounded-md overflow-hidden border border-gray-200 hover:border-[#1B5E20] transition bg-gray-50"
+                          title="Open photo evidence in new tab"
+                        >
+                          <img
+                            src={url}
+                            alt={`Evidence ${pIdx + 1}`}
+                            className="w-16 h-12 object-cover group-hover:scale-105 transition"
+                          />
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 {/* Explainable Scoring Breakdown Banner */}
                 <div className="bg-[#F8F9FA] rounded-lg p-3 text-xs border space-y-1.5 mb-3">
                   <div className="flex flex-wrap gap-2 text-[11px] font-bold">

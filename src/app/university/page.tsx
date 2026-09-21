@@ -72,7 +72,7 @@ export default function UniversityDashboardPage() {
         <div>
           <div className="flex items-center gap-2 text-xs font-bold text-[#1B5E20] uppercase tracking-wider mb-1">
             <GraduationCap className="w-4 h-4" />
-            Jharkhand Higher Education & Research Consortium
+            Higher Education & Research Consortium
           </div>
           <h1 className="text-2xl font-bold text-gray-900">
             {activeUniversity.org_name || activeUniversity.name}
@@ -85,7 +85,7 @@ export default function UniversityDashboardPage() {
         <div className="flex items-center gap-3">
           <div className="text-right">
             <div className="text-xs text-gray-500">Live DB Status</div>
-            <div className="text-sm font-bold text-[#1B5E20]">Active Supabase Sync</div>
+            <div className="text-sm font-bold text-[#1B5E20]">Active Live Sync</div>
           </div>
         </div>
       </div>
