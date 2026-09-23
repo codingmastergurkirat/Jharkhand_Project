@@ -6,14 +6,21 @@ import MatchQueue from '@/components/university/MatchQueue';
 import MilestoneTracker from '@/components/university/MilestoneTracker';
 import LessonsLearned from '@/components/university/LessonsLearned';
 import QuickLoginDrawer from '@/components/common/QuickLoginDrawer';
-import { GraduationCap, Sparkles, CheckCircle, Clock, BookOpen } from 'lucide-react';
+import { useToast } from '@/components/common/Toast';
+import { PRESET_UNIVERSITIES, PresetUniversity } from '@/lib/constants';
+import { GraduationCap, Sparkles, CheckCircle, Clock, BookOpen, ArrowRightLeft, ShieldCheck, LogIn } from 'lucide-react';
 
 export default function UniversityDashboardPage() {
   const supabase = createClient();
+  const { showToast } = useToast();
+
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [userProfile, setUserProfile] = useState<any>(null);
+  const [dbUniversities, setDbUniversities] = useState<any[]>([]);
+  const [selectedUnivEmail, setSelectedUnivEmail] = useState<string>(PRESET_UNIVERSITIES[1].email); // Default to BIT Mesra
   const [problems, setProblems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [activeTab, setActiveTab] = useState<'match' | 'milestones' | 'lessons'>('match');
 
   const loadData = async () => {
@@ -28,7 +35,23 @@ export default function UniversityDashboardPage() {
           .select('*')
           .eq('id', user.id)
           .single();
-        setUserProfile(profile);
+
+        if (profile) {
+          setUserProfile(profile);
+          if (profile.role === 'university' && profile.email) {
+            setSelectedUnivEmail(profile.email.toLowerCase());
+          }
+        }
+      }
+
+      // Fetch all registered university profiles from database
+      const { data: dbUnivs } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('role', 'university');
+
+      if (dbUnivs && dbUnivs.length > 0) {
+        setDbUniversities(dbUnivs);
       }
 
       // Fetch problems with milestones
@@ -50,52 +73,163 @@ export default function UniversityDashboardPage() {
 
   useEffect(() => {
     loadData();
+
+    // Listen to live Supabase Auth state changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      const user = session?.user || null;
+      setCurrentUser(user);
+
+      if (user) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .single();
+
+        setUserProfile(profile || null);
+        if (profile?.role === 'university' && profile.email) {
+          setSelectedUnivEmail(profile.email.toLowerCase());
+        }
+      } else {
+        setUserProfile(null);
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
-  // Fallback university profile for preview if not signed in
-  const activeUniversity = userProfile?.role === 'university'
-    ? userProfile
-    : {
-        id: '22222222-2222-2222-2222-222222222222',
-        name: 'Birla Institute of Technology (BIT) Mesra',
-        org_name: 'Birla Institute of Technology (BIT) Mesra',
-        district: 'Ranchi',
-        domain_tags: ['Education', 'Public Administration', 'Accessibility', 'Urban Infrastructure'],
-        expertise: 'Computer science, electrical engineering, aerospace engineering, civil engineering',
-        facilities: 'Software incubators, advanced computing centers'
+  // Merge pre-set universities with real database profile records (matching by email)
+  const availableUniversities: PresetUniversity[] = PRESET_UNIVERSITIES.map((preset) => {
+    const dbMatch = dbUniversities.find((dbU) => dbU.email?.toLowerCase() === preset.email.toLowerCase());
+    if (dbMatch) {
+      return {
+        ...preset,
+        id: dbMatch.id,
+        name: dbMatch.name || preset.name,
+        org_name: dbMatch.org_name || preset.org_name,
+        district: dbMatch.district || preset.district,
+        domain_tags: dbMatch.domain_tags?.length ? dbMatch.domain_tags : preset.domain_tags,
+        expertise: dbMatch.expertise || preset.expertise,
+        facilities: dbMatch.facilities || preset.facilities,
       };
+    }
+    return preset;
+  });
+
+  // Determine active university based on selectedUnivEmail or authenticated profile
+  const activeUniversity: PresetUniversity = 
+    availableUniversities.find((u) => u.email.toLowerCase() === selectedUnivEmail.toLowerCase()) ||
+    availableUniversities[1] || // Fallback to BIT Mesra
+    availableUniversities[0];
+
+  const isAuthenticatedAsActive = 
+    Boolean(currentUser && userProfile?.role === 'university' && userProfile?.email?.toLowerCase() === activeUniversity.email.toLowerCase());
+
+  // 1-Click login as the selected university faculty
+  const handleQuickLoginAsSelected = async (targetUniv: PresetUniversity) => {
+    setIsAuthenticating(true);
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: targetUniv.email,
+        password: targetUniv.pass,
+      });
+
+      if (error) {
+        showToast(`Login failed: ${error.message}. Ensure database is seeded.`, 'error');
+      } else {
+        showToast(`Successfully authenticated as ${targetUniv.name}!`, 'success');
+        setSelectedUnivEmail(targetUniv.email.toLowerCase());
+        await loadData();
+      }
+    } catch (err: any) {
+      showToast(err.message || 'Authentication failed', 'error');
+    } finally {
+      setIsAuthenticating(false);
+    }
+  };
 
   return (
     <div className="space-y-6">
-      {/* Institutional Header Banner */}
-      <div className="bg-white border rounded-xl p-6 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-2 text-xs font-bold text-[#1B5E20] uppercase tracking-wider mb-1">
-            <GraduationCap className="w-4 h-4" />
-            Higher Education & Research Consortium
+      {/* Institutional Header Banner with Dynamic University Switcher */}
+      <div className="bg-white border rounded-xl p-6 shadow-sm space-y-4">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2 text-xs font-bold text-[#1B5E20] uppercase tracking-wider">
+              <GraduationCap className="w-4 h-4" />
+              Higher Education & Research Consortium
+            </div>
+            <h1 className="text-2xl font-bold text-gray-900">
+              {activeUniversity.org_name || activeUniversity.name}
+            </h1>
+            <p className="text-sm text-gray-600">
+              Jurisdiction: <span className="font-semibold text-gray-800">{activeUniversity.district} District</span> • Domain Focus: <span className="text-gray-800">{activeUniversity.domain_tags?.join(', ') || 'Engineering'}</span>
+            </p>
           </div>
-          <h1 className="text-2xl font-bold text-gray-900">
-            {activeUniversity.org_name || activeUniversity.name}
-          </h1>
-          <p className="text-sm text-gray-600 mt-0.5">
-            Jurisdiction: <span className="font-semibold">{activeUniversity.district} District</span> • Domain Tags: {activeUniversity.domain_tags?.join(', ') || 'Engineering'}
-          </p>
+
+          {/* Interactive Institution Switcher Dropdown */}
+          <div className="bg-[#F8F9FA] border border-gray-200 p-3 rounded-xl flex flex-col sm:flex-row sm:items-center gap-3">
+            <div>
+              <label htmlFor="university-select" className="block text-[11px] font-bold text-gray-700 uppercase tracking-wide mb-1 flex items-center gap-1">
+                <ArrowRightLeft className="w-3.5 h-3.5 text-[#1B5E20]" />
+                Switch Institution:
+              </label>
+              <select
+                id="university-select"
+                value={activeUniversity.email.toLowerCase()}
+                onChange={(e) => setSelectedUnivEmail(e.target.value.toLowerCase())}
+                className="bg-white border border-gray-300 rounded-lg px-3 py-1.5 text-xs font-semibold text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#1B5E20] shadow-sm min-h-[38px]"
+              >
+                {availableUniversities.map((univ) => (
+                  <option key={univ.email} value={univ.email.toLowerCase()}>
+                    🎓 {univ.name} ({univ.district})
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Auth Status & Quick Login Action Button */}
+            <div className="flex items-end">
+              {isAuthenticatedAsActive ? (
+                <div className="flex items-center gap-1.5 px-3 py-2 bg-green-100 border border-green-300 text-[#1B5E20] text-xs font-bold rounded-lg shadow-sm">
+                  <ShieldCheck className="w-4 h-4 text-[#1B5E20]" />
+                  <span>Authenticated Faculty</span>
+                </div>
+              ) : (
+                <button
+                  onClick={() => handleQuickLoginAsSelected(activeUniversity)}
+                  disabled={isAuthenticating}
+                  className="px-3 py-2 bg-[#1B5E20] hover:bg-[#144718] text-white text-xs font-bold rounded-lg shadow transition flex items-center gap-1.5 disabled:opacity-50 min-h-[38px]"
+                  title={`Log in as faculty for ${activeUniversity.name}`}
+                >
+                  <LogIn className="w-3.5 h-3.5" />
+                  <span>{isAuthenticating ? 'Signing In...' : `1-Click Login (${activeUniversity.district})`}</span>
+                </button>
+              )}
+            </div>
+          </div>
         </div>
 
-        <div className="flex items-center gap-3">
-          <div className="text-right">
-            <div className="text-xs text-gray-500">Live DB Status</div>
-            <div className="text-sm font-bold text-[#1B5E20]">Active Live Sync</div>
+        {/* Institutional Facilities & Expertise Strip */}
+        <div className="pt-3 border-t grid grid-cols-1 md:grid-cols-2 gap-2 text-xs text-gray-600 bg-gray-50/70 p-3 rounded-lg">
+          <div>
+            <strong className="text-gray-800">Key Expertise:</strong> {activeUniversity.expertise}
+          </div>
+          <div>
+            <strong className="text-gray-800">Facilities:</strong> {activeUniversity.facilities}
           </div>
         </div>
       </div>
 
-      {/* Demo Warning / Quick Login if not authenticated as university */}
-      {(!currentUser || userProfile?.role !== 'university') && (
-        <div className="p-4 bg-amber-50 border border-amber-300 rounded-xl text-xs text-amber-900 space-y-3">
-          <p>
-            <strong>⚠️ Evaluator Notice:</strong> You are currently viewing as a guest preview (using BIT Mesra defaults). Use 1-Click Login below to switch to any registered University faculty account:
-          </p>
+      {/* Evaluator Notice if viewing in preview mode */}
+      {!isAuthenticatedAsActive && (
+        <div className="p-4 bg-amber-50 border border-amber-300 rounded-xl text-xs text-amber-900 space-y-2">
+          <div className="flex items-center justify-between">
+            <p>
+              <strong>💡 Evaluator Mode:</strong> You are viewing <strong>{activeUniversity.name}</strong>. Use the <em>"Switch Institution"</em> dropdown above to test algorithm re-scoring across different Jharkhand universities, or click <em>"1-Click Login"</em> to authenticate as this institution's faculty.
+            </p>
+          </div>
           <QuickLoginDrawer />
         </div>
       )}

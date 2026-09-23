@@ -19,8 +19,8 @@ const DEMO_ACCOUNTS: QuickAccount[] = [
   {
     role: 'admin',
     name: 'Jan Samadhan Administrator',
-    email: 'admin.jharkhand@gov.in',
-    pass: 'Admin@Jharkhand2026',
+    email: 'admin@jansamadhan.gov.in',
+    pass: 'Admin@JanSamadhan2026',
     badge: '👑 Portal Admin',
     route: '/admin'
   },
@@ -133,8 +133,12 @@ export default function QuickLoginDrawer() {
         showToast(`Login failed: ${error.message}. Ensure database is seeded.`, 'error');
       } else {
         showToast(`Signed in as ${acc.name} (${acc.role})`, 'success');
-        router.push(acc.route);
-        router.refresh();
+        if (typeof window !== 'undefined' && window.location.pathname === acc.route) {
+          window.location.reload();
+        } else {
+          router.push(acc.route);
+          router.refresh();
+        }
       }
     } catch (err: any) {
       showToast(err.message || 'Login failed', 'error');
