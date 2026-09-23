@@ -70,9 +70,16 @@ export default function ExpressInterestModal({
           <Building className="w-5 h-5 text-[#1B5E20]" />
           Express Corporate CSR Interest
         </h3>
-        <p className="text-xs text-gray-600 mb-2">
-          Proposal: <span className="font-bold text-gray-900">{proposal.problem?.title || 'Selected Project'}</span>
-        </p>
+        <div className="flex flex-wrap items-center gap-2 mb-2">
+          <p className="text-xs text-gray-600">
+            Proposal: <span className="font-bold text-gray-900">{proposal.problem?.title || 'Selected Project'}</span>
+          </p>
+          {proposal.problem?.sdg_goal && (
+            <span className="text-xs px-2 py-0.5 rounded bg-blue-50 text-blue-800 border border-blue-200 font-medium">
+              🎯 {proposal.problem.sdg_goal}
+            </span>
+          )}
+        </div>
 
         {/* Citizen Evidence Photos */}
         {proposal.problem?.photo_urls && proposal.problem?.photo_urls.length > 0 && (

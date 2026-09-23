@@ -204,17 +204,30 @@ async function seed() {
 
     if (existing) {
       console.log(`[EXISTS] Updating metadata for ${account.name} (${account.email})...`);
-      await supabase.auth.admin.updateUserById(existing.id, {
+      const { error: updateError } = await supabase.auth.admin.updateUserById(existing.id, {
         password: account.password,
         user_metadata: userMetadata,
         email_confirm: true
       });
+      if (updateError) {
+        throw new Error(`Failed to update Auth user ${account.email}: ${updateError.message}`);
+      }
 
-      await supabase.from('profiles').upsert({
+      const { error: profileError } = await supabase.from('profiles').upsert({
         id: existing.id,
         email: account.email,
-        ...userMetadata
+        name: userMetadata.name,
+        role: userMetadata.role,
+        org_name: userMetadata.org_name,
+        district: userMetadata.district,
+        domain_tags: userMetadata.domain_tags,
+        facilities: userMetadata.facilities,
+        expertise: userMetadata.expertise,
+        interest_type: userMetadata.interest_type
       });
+      if (profileError) {
+        throw new Error(`Failed to upsert profile ${account.email}: ${profileError.message}`);
+      }
     } else {
       console.log(`[CREATING] Generating Auth account for ${account.name} (${account.email})...`);
       const { data, error } = await supabase.auth.admin.createUser({
@@ -225,15 +238,30 @@ async function seed() {
       });
 
       if (error) {
-        console.error(`❌ Failed to create user ${account.email}:`, error.message);
+        throw new Error(`Failed to create user ${account.email}: ${error.message}`);
       } else if (data?.user) {
+        const { error: profileError } = await supabase.from('profiles').upsert({
+          id: data.user.id,
+          email: account.email,
+          name: userMetadata.name,
+          role: userMetadata.role,
+          org_name: userMetadata.org_name,
+          district: userMetadata.district,
+          domain_tags: userMetadata.domain_tags,
+          facilities: userMetadata.facilities,
+          expertise: userMetadata.expertise,
+          interest_type: userMetadata.interest_type
+        });
+        if (profileError) {
+          throw new Error(`Failed to upsert profile ${account.email}: ${profileError.message}`);
+        }
         console.log(`✅ Created ${account.name} [ID: ${data.user.id}]`);
       }
     }
   }
 
   console.log('\n================================================================');
-  console.log('Seeding complete! All 12 demo accounts are active and ready.');
+  console.log(`Seeding complete! All ${SEED_ACCOUNTS.length} demo accounts are active and ready.`);
   console.log('================================================================\n');
 }
 

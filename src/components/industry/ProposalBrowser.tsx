@@ -139,10 +139,15 @@ export default function ProposalBrowser({ industryId }: ProposalBrowserProps) {
                 <div>
                   {/* Category & District Badges */}
                   <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-2">
                       <span className="text-xs px-2.5 py-0.5 rounded-full bg-green-50 text-[#1B5E20] border border-green-200 font-bold">
                         {prob.domain}
                       </span>
+                      {prob.sdg_goal && (
+                        <span className="text-xs px-2 py-0.5 rounded bg-blue-50 text-blue-800 border border-blue-200 font-medium flex items-center gap-1">
+                          🎯 {prob.sdg_goal}
+                        </span>
+                      )}
                       <span className="text-xs text-gray-500 flex items-center gap-1">
                         <MapPin className="w-3.5 h-3.5 text-gray-400" />
                         {prob.district}

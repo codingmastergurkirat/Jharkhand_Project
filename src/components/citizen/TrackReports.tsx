@@ -137,6 +137,11 @@ export default function TrackReports({ userId, refreshTrigger }: TrackReportsPro
                     <span className="text-xs px-2 py-0.5 rounded bg-gray-100 text-gray-700 font-medium">
                       {prob.domain}
                     </span>
+                    {prob.sdg_goal && (
+                      <span className="text-xs px-2 py-0.5 rounded bg-blue-50 text-blue-800 border border-blue-200 font-medium flex items-center gap-1">
+                        🎯 {prob.sdg_goal}
+                      </span>
+                    )}
                     <span className="text-xs text-gray-500 flex items-center gap-1 font-medium">
                       <MapPin className="w-3.5 h-3.5 text-gray-400" />
                       {prob.district} District

@@ -199,10 +199,18 @@ export default function ProposalModal({
 
         {/* Problem Header Info */}
         <div className="mb-4">
-          <div className="flex items-center gap-2 text-xs font-bold text-[#1B5E20] uppercase tracking-wider mb-1">
+          <div className="flex flex-wrap items-center gap-2 text-xs font-bold text-[#1B5E20] uppercase tracking-wider mb-1">
             <span>{problem.domain}</span>
             <span>•</span>
             <span>{problem.district} District</span>
+            {problem.sdg_goal && (
+              <>
+                <span>•</span>
+                <span className="text-blue-800 bg-blue-50 px-2 py-0.5 rounded border border-blue-200 normal-case font-medium">
+                  🎯 {problem.sdg_goal}
+                </span>
+              </>
+            )}
           </div>
           <h3 className="text-lg font-bold text-gray-900 leading-snug">
             {problem.title}

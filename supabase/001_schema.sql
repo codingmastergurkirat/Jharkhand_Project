@@ -16,6 +16,7 @@ DROP TABLE IF EXISTS public.profiles CASCADE;
 
 -- Enable UUID extension
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
 -- 2. PROFILES TABLE (Linked directly to Supabase Auth)
 CREATE TABLE public.profiles (
@@ -54,6 +55,7 @@ CREATE TABLE public.problems (
         'Sanitation', 'Environment', 'Energy', 'Urban Infrastructure',
         'Accessibility', 'Public Administration', 'Rural Livelihoods'
     )),
+    sdg_goal TEXT,
     district TEXT NOT NULL,
     lat NUMERIC,
     lng NUMERIC,

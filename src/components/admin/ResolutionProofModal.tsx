@@ -36,8 +36,18 @@ export default function ResolutionProofModal({ problem, onClose }: ResolutionPro
           <h3 className="text-lg font-bold text-gray-900 leading-snug mt-1">
             {problem.title}
           </h3>
-          <p className="text-xs text-gray-500">
-            District: {problem.district} • Domain: {problem.domain}
+          <p className="text-xs text-gray-500 flex flex-wrap items-center gap-1.5 mt-0.5">
+            <span>District: {problem.district}</span>
+            <span>•</span>
+            <span>Domain: {problem.domain}</span>
+            {problem.sdg_goal && (
+              <>
+                <span>•</span>
+                <span className="text-blue-800 bg-blue-50 px-2 py-0.5 rounded border border-blue-200 font-medium">
+                  🎯 {problem.sdg_goal}
+                </span>
+              </>
+            )}
           </p>
         </div>
 

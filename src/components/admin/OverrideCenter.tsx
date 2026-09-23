@@ -91,10 +91,15 @@ export default function OverrideCenter({
               >
                 <div className="flex flex-wrap items-start justify-between gap-2">
                   <div>
-                    <div className="flex items-center gap-2 text-xs">
+                    <div className="flex flex-wrap items-center gap-2 text-xs">
                       <span className="px-2 py-0.5 rounded bg-gray-100 font-bold text-gray-700">
                         {prob.domain}
                       </span>
+                      {prob.sdg_goal && (
+                        <span className="px-2 py-0.5 rounded bg-blue-50 text-blue-800 border border-blue-200 font-medium flex items-center gap-1">
+                          🎯 {prob.sdg_goal}
+                        </span>
+                      )}
                       <span className="text-gray-500 flex items-center gap-1 font-medium">
                         <MapPin className="w-3.5 h-3.5 text-gray-400" />
                         {prob.district} District

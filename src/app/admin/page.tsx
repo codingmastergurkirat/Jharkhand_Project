@@ -281,9 +281,16 @@ export default function AdminDashboardPage() {
                 return (
                   <div key={prob.id} className="bg-white p-5 rounded-xl border border-green-300 shadow-sm space-y-3">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-[#1B5E20] bg-green-50 px-2 py-0.5 rounded border border-green-200">
-                        {prob.domain} • {prob.district}
-                      </span>
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        <span className="text-xs font-bold text-[#1B5E20] bg-green-50 px-2 py-0.5 rounded border border-green-200">
+                          {prob.domain} • {prob.district}
+                        </span>
+                        {prob.sdg_goal && (
+                          <span className="text-xs font-medium text-blue-800 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
+                            🎯 {prob.sdg_goal}
+                          </span>
+                        )}
+                      </div>
                       <span className="text-xs font-bold text-amber-600">
                         ⭐ {impact?.citizen_rating || 5}/5 Stars
                       </span>

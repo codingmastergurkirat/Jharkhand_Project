@@ -5,7 +5,7 @@ import { createClient } from '@/lib/supabase/client';
 import { useToast } from '@/components/common/Toast';
 import DuplicateBanner from './DuplicateBanner';
 import { detectDuplicate, DuplicateMatchResult } from '@/lib/duplicate-detector';
-import { JHARKHAND_DISTRICTS, OFFICIAL_DOMAINS, SUBMITTER_TYPES, DPDP_CONSENT_TEXT } from '@/lib/constants';
+import { JHARKHAND_DISTRICTS, OFFICIAL_DOMAINS, SUBMITTER_TYPES, DPDP_CONSENT_TEXT, SDG_GOALS } from '@/lib/constants';
 import { ArrowRight, ArrowLeft, Upload, CheckCircle, Shield, MapPin, FileText, Image as ImageIcon, X } from 'lucide-react';
 
 interface ProblemSubmissionWizardProps {
@@ -24,6 +24,7 @@ export default function ProblemSubmissionWizard({ userId, onSuccess }: ProblemSu
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [domain, setDomain] = useState<string>(OFFICIAL_DOMAINS[0]);
+  const [sdgGoal, setSdgGoal] = useState<string>('');
   const [submitterType, setSubmitterType] = useState<string>(SUBMITTER_TYPES[0]);
 
   // Step 2 Location State
@@ -166,6 +167,7 @@ export default function ProblemSubmissionWizard({ userId, onSuccess }: ProblemSu
           title: title.trim(),
           description: fullDescription,
           domain,
+          sdg_goal: sdgGoal.trim() || null,
           district,
           lat: latitude || 23.3441, // Default fallback coordinates
           lng: longitude || 85.3096,
@@ -269,6 +271,30 @@ export default function ProblemSubmissionWizard({ userId, onSuccess }: ProblemSu
                 ))}
               </select>
             </div>
+          </div>
+
+          <div>
+            <div className="flex items-center justify-between mb-1">
+              <label className="block text-sm font-bold text-gray-800">
+                UN Sustainable Development Goal (SDG Alignment)
+              </label>
+              <span className="text-xs text-gray-500 font-medium bg-gray-100 px-2 py-0.5 rounded">Optional</span>
+            </div>
+            <select
+              value={sdgGoal}
+              onChange={(e) => setSdgGoal(e.target.value)}
+              className="w-full px-3 py-2.5 border rounded-lg text-sm bg-white focus:ring-3 focus:ring-[#E65100] focus:outline-none"
+            >
+              <option value="">-- No SDG Selected (Optional) --</option>
+              {SDG_GOALS.map((sdg) => (
+                <option key={sdg} value={sdg}>
+                  {sdg}
+                </option>
+              ))}
+            </select>
+            <p className="text-[11px] text-gray-500 mt-1">
+              Optionally align this challenge with an official UN Sustainable Development Goal (e.g., Clean Water, Sustainable Cities, Climate Action).
+            </p>
           </div>
 
           <div>
@@ -527,6 +553,14 @@ export default function ProblemSubmissionWizard({ userId, onSuccess }: ProblemSu
                 <span className="text-gray-500">District:</span>
                 <p className="font-semibold text-gray-900">{district} District</p>
               </div>
+              {sdgGoal && (
+                <div className="col-span-2 pt-1 border-t">
+                  <span className="text-gray-500">UN SDG Goal Alignment:</span>
+                  <p className="font-semibold text-emerald-800 flex items-center gap-1 mt-0.5">
+                    🎯 {sdgGoal}
+                  </p>
+                </div>
+              )}
             </div>
             <div>
               <span className="text-gray-500 text-xs font-bold block mb-1">Evidence Photos ({photoUrls.length}):</span>
